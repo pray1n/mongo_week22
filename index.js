@@ -1,16 +1,27 @@
-const dotenv = require('dotenv')
 const express = require('express')
+const mongoose = require('mongoose')
 
-dotenv.config()
-const port = process.env.PORT || 8080
+
+const mongodbPassword = 'ZhNqoPdAg5ERJBMa'
+const mongodbConnection = `mongodb+srv://justinw:${mongodbPassword}@cluster0.zxpk1sy.mongodb.net/?retryWrites=true&w=majority`
+
+mongoose.connect(mongodbConnection)
+
+const db = mongoose.connection
+
+db.on('error', console.error.bind(console, 'MongoDB connection failed'))
+
 const app = express()
-app.use(express.json())
 app.set('view engine', 'ejs')
-app.engine('ejs', require('ejs').__express);
+app.use(express.static('public'));
+app.use(express.json())
+
+const port = 3000
+
+app.post('/student', (req, res) => {
+    console.log(req.body)
+    res.send({created: req.body})
+})
 
 
-app.get('/', (req, res) => {
-    res.render('greeting')})
-    
-
-app.listen(port, () => console.log('connected'))
+app.listen(port, () => console.log('Server listening at ' + port))
